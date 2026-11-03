@@ -9,6 +9,7 @@
   ELECTION DAY UPDATE COPY (Nov. 3, 2026), in election_day_update/: copied from full_pia/table_1_stacked_bars_d3.html
     (the published chart; full_pia is not touched). Compares the night before Election Day: the 2026 download in
     direct-download/nov_3_1.43pm (as of Nov. 2, 2026) vs. the night before Election Day 2022 (as of Nov. 7, 2022). Data comes from election_day_update.Rmd chunk 13, which writes it inline below.
+    STACK ORDER MATCHED TO FLOURISH (Nov. 3): each bar sorted largest party first (stack_sort: descending), not a fixed D | R | O.
     TEXT MATCHED TO FLOURISH 30791260 (Nov. 3): title "Election Eve: ...", subtitle, footer note and popup copied from David's
     Election Day Flourish copy. Still filled from the data: the aria-label;
     the axis max fits the biggest bar (was fixed at 800,000); the popup's "Seven days before Election Day" line now says
@@ -307,7 +308,7 @@
 
 <script>
 // ---- Settings (each copied from Flourish, or a labeled change) ----
-const SERIES = ["Democratic", "Republican", "Other"];            // live stack order, left to right (stack_sort: descending)
+const SERIES = ["Democratic", "Republican", "Other"];            // the three parties (each bar is sorted largest first below)
 const COLORS = { Republican: "#c71e1d", Democratic: "#1979b9", Other: "#faa916" };   // CNS red, CNS blue, CNS main orange-yellow #faa916 (David, Oct. 28; Other was #666666, too close to the gray totals)
 // How the % change from 2022 is drawn: "number" (after the 2026 total), "arrow" (growth arrow between the bars),
 // "wedge" (shaded slope between the bar ends) or "badge" (big, next to the panel title). Try one with ?change=arrow
@@ -411,10 +412,11 @@ function draw() {
   const plotW = Math.min(avail - lastTickHalf, d3.min(rows, r => (avail - endGap - r.endW) * X_MAX / r.total));
   const x = d3.scaleLinear().domain([0, X_MAX]).range([left, left + plotW]);
 
-  // Each bar's segments, left to right (party shares are no longer printed on the page; they're in the popup)
+  // Each bar's segments, left to right, largest party first, like Flourish (stack_sort: descending): on the 2026 mail-in bar,
+  // Other (65,430) comes before Republicans (63,380). Party shares are no longer printed on the page; they're in the popup.
   rows.forEach(r => {
     let x0 = 0;
-    r.segs = SERIES.map(s => { const seg = { key: s, x0, x1: x0 + r[s] }; x0 += r[s]; return seg; });
+    r.segs = SERIES.slice().sort((a, b) => r[b] - r[a]).map(s => { const seg = { key: s, x0, x1: x0 + r[s] }; x0 += r[s]; return seg; });
   });
 
   // Lay out the panels top to bottom
