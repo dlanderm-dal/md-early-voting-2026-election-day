@@ -1,0 +1,11 @@
+.DS_Store
+.Rhistory
+.RData
+.Rproj.user/
+Rplots.pdf
+
+# Local only, not published
+election_day_graphics.html
+section_5_districts_stacked_bars_d3.html
+manual fact check/
+from_full_pia/11-8-2022/
